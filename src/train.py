@@ -1,7 +1,10 @@
-ECHO is on.
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report, ConfusionMatrixDisplay
+import matplotlib.pyplot as plt
+import os
+import joblib
 
 # Load the Iris dataset
 iris = load_iris()
@@ -24,8 +27,6 @@ y_pred = model.predict(X_test)
 print("Predictions:", y_pred[:5])
 print("True labels:", y_test[:5])
 
-from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
-
 # 1. Accuracy
 accuracy = accuracy_score(y_test, y_pred)
 print("Accuracy:", accuracy)
@@ -37,3 +38,17 @@ print("Confusion Matrix:\n", cm)
 # 3. Classification Report
 report = classification_report(y_test, y_pred, target_names=iris.target_names)
 print("Classification Report:\n", report)
+
+# Create the outputs folder if it doesn't exist
+os.makedirs("outputs", exist_ok=True)
+
+# Visualize and save the confusion matrix as a PNG file inside outputs/
+ConfusionMatrixDisplay.from_estimator(model, X_test, y_test)
+plt.title("Confusion Matrix")
+plt.savefig("outputs/confusion_matrix.png")
+plt.close()
+
+# Save the trained model using joblib in the outputs/ directory
+joblib.dump(model, "outputs/decision_tree_model.joblib")
+
+
